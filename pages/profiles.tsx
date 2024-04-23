@@ -1,24 +1,28 @@
-import useCurrentUser from "@/hooks/useCurrentUser";
-import { NextPageContext } from "next";
-import { getSession } from "next-auth/react";
-import Image from "next/image";
+import { useCallback } from "react";
+
+import { GetServerSidePropsContext } from "next";
+import { getServerSession } from "next-auth/next";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
-export async function getServerSideProps(context: NextPageContext) {
-    const session = await getSession(context);
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { authOptions } from "./api/auth/[...nextauth]";
 
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/auth',
-                permanent: false
-            }
-        }
-    }
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(context.req, context.res, authOptions);
 
+  if (!session) {
     return {
-        props: {}
-    }
+      redirect: {
+        destination: "/auth",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }
 
 const Profiles = () => {
