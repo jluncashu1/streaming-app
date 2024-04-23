@@ -1,31 +1,33 @@
-import Billboard from "@/components/Billboard";
-import InfoModal from "@/components/InfoModal";
-import MovieList from "@/components/MovieList";
+import React from "react";
+import { GetServerSidePropsContext } from "next";
+import { getServerSession } from "next-auth/next";
+
 import Navbar from "@/components/Navbar";
-import useCurrentUser from "@/hooks/useCurrentUser";
+import Billboard from "@/components/Billboard";
+import MovieList from "@/components/MovieList";
+import InfoModal from "@/components/InfoModal";
+import useMovieList from "@/hooks/useMovieList";
 import useFavorites from "@/hooks/useFavorites";
 import useInfoModal from "@/hooks/useInfoModal";
-import useMovieList from "@/hooks/useMovieList";
-import { NextPageContext } from "next";
-import { getSession } from "next-auth/react";
+import Head from "next/head";
+import { authOptions } from "./api/auth/[...nextauth]";
 
-export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession(context);
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(context.req, context.res, authOptions);
 
-  if(!session) {
+  if (!session) {
     return {
       redirect: {
-        destination: '/auth',
-        permanent: false
-      }
-    }
+        destination: "/auth",
+        permanent: false,
+      },
+    };
   }
 
   return {
-    props: {}
-  }
+    props: {},
+  };
 }
-
 export default function Home() {
   const { data: movies = [] } = useMovieList();
   const { data: favorites = [] } = useFavorites();
