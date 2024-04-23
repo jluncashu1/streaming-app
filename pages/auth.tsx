@@ -1,12 +1,34 @@
-import Image from "next/image";
-import Input from "@/components/Input";
 import { useCallback, useState } from "react";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
+
+import { GetServerSidePropsContext } from "next";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+import Head from "next/head";
 
 import axios from "axios";
-import { useRouter } from "next/router";
 
-import { FcGoogle } from "react-icons/fc";
+import Input from "@/components/Input";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { getServerSession } from "next-auth";
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
 
 const Auth = () => {
 
